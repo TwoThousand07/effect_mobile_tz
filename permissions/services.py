@@ -12,4 +12,4 @@ def has_permission(user, resource, action):
     if not permission:
         return False
     
-    return getattr(permission, f"can {action}", False)
+    return getattr(permission, f"can_{action}", False)
