@@ -1,7 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .services import has_permission
 from .models import Permission
 
 @api_view(["POST"])
