@@ -5,19 +5,22 @@ from .auth import decode_token
 
 
 class AuthMiddleware(MiddlewareMixin):
-    def process_token(self, request):
+    def process_request(self, request):
+        request.user = None
         auth_header = request.headers.get("Authorization")
         
         if not auth_header:
-            request.user = None
             return 
         
         try:
-            token = auth_header.splite(" ")[1]
+            parts = auth_header.split(" ")
+            if len(parts) != 2 or parts[0] != "Bearer":
+                return
+            
+            token = parts[1]
             payload = decode_token(token)
             
             if not payload:
-                request.user = None
                 return
             
             user = User.objects.get(id=payload["user_id"])
@@ -25,5 +28,7 @@ class AuthMiddleware(MiddlewareMixin):
             if not user.is_active:
                 request.user = None
                 return
+            
+            request.user = user
         except:
             request.user = None
